@@ -17,7 +17,7 @@ class PlayerAdapter : RecyclerView.Adapter<PlayerAdapter.ViewHolder?>() {
     private var listener: OnItemRecyclerViewClickListener<PlayerDetail>? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        var view = LayoutInflater.from(parent.context)
+        val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_layout_player, parent, false)
         return ViewHolder(view).apply {
             registerItemRecyclerViewClickListener {

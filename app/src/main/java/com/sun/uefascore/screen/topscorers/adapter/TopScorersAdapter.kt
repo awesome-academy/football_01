@@ -17,7 +17,7 @@ class TopScorersAdapter : RecyclerView.Adapter<TopScorersAdapter.ViewHolder?>() 
     private var listener: OnItemRecyclerViewClickListener<TopScorer>? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        var view = LayoutInflater.from(parent.context)
+        val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_layout_top_scorers, parent, false)
         return ViewHolder(view).apply {
             registerItemRecyclerViewClickListener {

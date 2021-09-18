@@ -7,6 +7,7 @@ import com.sun.uefascore.data.model.TeamDetail
 import com.sun.uefascore.utils.LoadImageUrl
 import kotlinx.android.synthetic.main.item_team_search.view.*
 
+@Suppress("NAME_SHADOWING")
 class SearchTeamViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     private var onItemClickTeam: ((TeamDetail) -> Unit)? = null

@@ -17,7 +17,7 @@ class StandingGroupAdapter : RecyclerView.Adapter<StandingGroupAdapter.ViewHolde
     private var listener: OnItemRecyclerViewClickListener<Team>? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        var view = LayoutInflater.from(parent.context)
+        val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_layout_standing_group, parent, false)
         return ViewHolder(view, listener).apply {
             bindSubAdapter()

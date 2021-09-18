@@ -1,11 +1,9 @@
 package com.sun.uefascore.screen.searchteam.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.sun.uefascore.R
-import com.sun.uefascore.data.model.Fixture
 import com.sun.uefascore.data.model.TeamDetail
 
 class SearchTeamAdapter : RecyclerView.Adapter<SearchTeamViewHolder>() {

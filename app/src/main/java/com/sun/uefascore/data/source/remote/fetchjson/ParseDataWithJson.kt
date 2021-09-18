@@ -94,8 +94,7 @@ class ParseDataWithJson {
                 }
                 TypeModel.SEASON -> {
                     parseJsonToListString(
-                        JSONObject(jsonString).getJSONArray(Constant.RESPONSE),
-                        TypeModel.SEASON
+                        JSONObject(jsonString).getJSONArray(Constant.RESPONSE)
                     )
                 }
                 TypeModel.TEAM_SEARCH -> {
@@ -153,7 +152,7 @@ class ParseDataWithJson {
         return data.filterNotNull()
     }
 
-    private fun parseJsonToListString(jsonArray: JSONArray?, typeModel: TypeModel): Any {
+    private fun parseJsonToListString(jsonArray: JSONArray?): Any {
         val data = mutableListOf<String>()
         for (i in 0 until (jsonArray?.length() ?: 0)) {
             val stringSeason = jsonArray?.getInt(i).toString()

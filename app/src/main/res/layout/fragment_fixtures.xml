@@ -8,6 +8,7 @@
     tools:context=".screen.main.MainActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayoutFixtures"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -45,9 +46,9 @@
             android:id="@+id/textViewSeason"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAlignment="textEnd"
-            android:layout_marginEnd="@dimen/dp_5"
             android:layout_marginTop="@dimen/dp_30"
+            android:layout_marginEnd="@dimen/dp_5"
+            android:textAlignment="textEnd"
             android:textColor="@color/color_orange_white"
             app:layout_constraintEnd_toStartOf="@+id/spinnerSeason"
             app:layout_constraintTop_toBottomOf="@+id/imageViewLogo" />
@@ -139,15 +140,22 @@
             app:layout_constraintStart_toStartOf="@id/guidelineLeft"
             app:layout_constraintTop_toBottomOf="@id/recyclerViewFixtureOfDay" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewFixtureHistory"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshData"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="@dimen/dp_23"
-            android:orientation="vertical"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintDimensionRatio="411:600"
-            app:layout_constraintTop_toBottomOf="@id/textViewFixtureHistory"
-            tools:listitem="@layout/item_fixture_of_day" />
+            app:layout_constraintTop_toBottomOf="@id/textViewFixtureHistory">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewFixtureHistory"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_fixture_of_day" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

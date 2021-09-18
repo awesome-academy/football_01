@@ -1,8 +1,7 @@
 package com.sun.uefascore.screen.fixtures
 
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,24 +14,22 @@ import androidx.fragment.app.Fragment
 import com.sun.uefascore.R
 import com.sun.uefascore.data.model.Fixture
 import com.sun.uefascore.data.source.repository.FixtureRepository
-import com.sun.uefascore.screen.base.HomePageFragment
 import com.sun.uefascore.screen.fixtures.adapter.FixtureAdapter
 import com.sun.uefascore.screen.fixtures.adapter.FixtureAllAdapter
 import com.sun.uefascore.screen.searchteam.SearchFragment
 import com.sun.uefascore.screen.teamdetail.TeamDetailFragment
-import com.sun.uefascore.utils.Constant
-import com.sun.uefascore.utils.OnFavoriteListener
-import com.sun.uefascore.utils.OnGetSeasonListener
-import com.sun.uefascore.utils.addFragment
+import com.sun.uefascore.utils.*
 import kotlinx.android.synthetic.main.fragment_fixtures.*
 import java.text.SimpleDateFormat
 import java.util.*
 
+@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class FixturesFragment : Fragment(), ContractFixture.View, AdapterView.OnItemSelectedListener,
     OnFavoriteListener {
 
     private var season = ""
     private var dayByPicker = ""
+    private var dayDevice = ""
     private var onFavoriteListener: OnFavoriteListener? = null
     private var onGetSeasonListener: OnGetSeasonListener? = null
     private val fixtureAdapter by lazy { FixtureAdapter() }
@@ -63,6 +60,10 @@ class FixturesFragment : Fragment(), ContractFixture.View, AdapterView.OnItemSel
         searchTeam()
         onClickItem()
         onClickDatePicker()
+        reloadData()
+        constraintLayoutFixtures.setOnClickListener {
+            hideKeyboard()
+        }
     }
 
     override fun onGetFixtureSuccess(fixtures: MutableList<Fixture>) {
@@ -71,6 +72,7 @@ class FixturesFragment : Fragment(), ContractFixture.View, AdapterView.OnItemSel
 
     override fun onGetAllFixtureSuccess(fixtures: MutableList<Fixture>) {
         fixtureAllAdapter.updateData(fixtures)
+        swipeRefreshData.isRefreshing = false
     }
 
     override fun getSeasonSuccess(season: MutableList<String>) {
@@ -82,10 +84,11 @@ class FixturesFragment : Fragment(), ContractFixture.View, AdapterView.OnItemSel
         Toast.makeText(context, exception?.message, Toast.LENGTH_SHORT).show()
     }
 
+    @SuppressLint("SimpleDateFormat")
     private fun initPresenter() {
         val date = Date()
         val formatter = SimpleDateFormat(Constant.DAY_FORMAT)
-        val dayDevice = formatter.format(date)
+        dayDevice = formatter.format(date)
         fixturePresenter.apply {
             setView(this@FixturesFragment)
             getFixture(dayDevice, season)
@@ -102,6 +105,7 @@ class FixturesFragment : Fragment(), ContractFixture.View, AdapterView.OnItemSel
         }
     }
 
+    @SuppressLint("SimpleDateFormat")
     private fun initDate() {
         val date = Date()
         val formatter = SimpleDateFormat(Constant.DAY_FORMAT)
@@ -118,6 +122,7 @@ class FixturesFragment : Fragment(), ContractFixture.View, AdapterView.OnItemSel
         searchViewTeam.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(name: String?): Boolean {
                 addFragment(SearchFragment.newInstance(name?.trim(), season), R.id.containerLayout)
+                hideKeyboard()
                 return true
             }
 
@@ -136,6 +141,7 @@ class FixturesFragment : Fragment(), ContractFixture.View, AdapterView.OnItemSel
                     },
                     R.id.containerLayout
                 )
+                hideKeyboard()
             }
             registerAwayClickListener {
                 addFragment(
@@ -144,6 +150,7 @@ class FixturesFragment : Fragment(), ContractFixture.View, AdapterView.OnItemSel
                     },
                     R.id.containerLayout
                 )
+                hideKeyboard()
             }
         }
         fixtureAllAdapter.apply {
@@ -154,6 +161,7 @@ class FixturesFragment : Fragment(), ContractFixture.View, AdapterView.OnItemSel
                     },
                     R.id.containerLayout
                 )
+                hideKeyboard()
             }
             registerAwayClickListener {
                 addFragment(
@@ -162,6 +170,7 @@ class FixturesFragment : Fragment(), ContractFixture.View, AdapterView.OnItemSel
                     },
                     R.id.containerLayout
                 )
+                hideKeyboard()
             }
         }
     }
@@ -172,6 +181,7 @@ class FixturesFragment : Fragment(), ContractFixture.View, AdapterView.OnItemSel
         }
     }
 
+    @SuppressLint("SimpleDateFormat")
     private fun onGetDataByDatePicker() {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
@@ -181,9 +191,11 @@ class FixturesFragment : Fragment(), ContractFixture.View, AdapterView.OnItemSel
         val datePicker =
             context?.let {
                 DatePickerDialog(it, { _, year, monthOfYear, dayOfMonth ->
-                    val datePicker =
-                        SimpleDateFormat(Constant.DAY_FORMAT_FORWARD).parse("$year/${monthOfYear + 1}/$dayOfMonth")
-                    val stringDate = SimpleDateFormat(Constant.DAY_FORMAT).format(datePicker)
+                    val stringDate = SimpleDateFormat(Constant.DAY_FORMAT).format(
+                        SimpleDateFormat(
+                            Constant.DAY_FORMAT_FORWARD
+                        ).parse("$year/${monthOfYear + 1}/$dayOfMonth")
+                    )
                     dayByPicker = stringDate
                     textViewDayOfMatches.text = stringDate
                     fixturePresenter.apply {
@@ -197,7 +209,7 @@ class FixturesFragment : Fragment(), ContractFixture.View, AdapterView.OnItemSel
 
     private fun initSpinner(seasons: MutableList<String>) {
         val stateAdapter = view?.let {
-            ArrayAdapter<String>(
+            ArrayAdapter(
                 it.context,
                 R.layout.support_simple_spinner_dropdown_item,
                 seasons
@@ -209,6 +221,14 @@ class FixturesFragment : Fragment(), ContractFixture.View, AdapterView.OnItemSel
 
     fun registerFavoriteListener(onFavoriteListener: OnFavoriteListener) {
         this.onFavoriteListener = onFavoriteListener
+    }
+
+    private fun reloadData() {
+        swipeRefreshData.setOnRefreshListener {
+            fixturePresenter.apply {
+                getAllFixture(season)
+            }
+        }
     }
 
     override fun onItemSelected(p: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {

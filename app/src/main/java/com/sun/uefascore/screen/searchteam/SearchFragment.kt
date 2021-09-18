@@ -1,7 +1,6 @@
 package com.sun.uefascore.screen.searchteam
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,8 +13,11 @@ import com.sun.uefascore.data.source.repository.TeamRepository
 import com.sun.uefascore.screen.searchteam.adapter.SearchTeamAdapter
 import com.sun.uefascore.screen.teamdetail.TeamDetailFragment
 import com.sun.uefascore.utils.addFragment
+import com.sun.uefascore.utils.hideKeyboard
 import kotlinx.android.synthetic.main.fragment_fixtures.*
 import kotlinx.android.synthetic.main.fragment_search_team.*
+import kotlinx.android.synthetic.main.fragment_search_team.imageViewBack
+import kotlinx.android.synthetic.main.fragment_team_detail.*
 import kotlinx.android.synthetic.main.item_team_search.*
 import kotlinx.android.synthetic.main.item_team_search.view.*
 
@@ -52,10 +54,13 @@ class SearchFragment : Fragment(), SearchContract.View {
         initData()
         searchTeam()
         onClickItem()
+        reloadData()
+        handleEvent()
     }
 
     override fun getTeamByNameSuccess(team: MutableList<TeamDetail>) {
         searchTeamAdapter.updateData(team)
+        swipeRefreshDataSearch?.isRefreshing = false
     }
 
     override fun onError(exception: Exception?) {}
@@ -101,7 +106,21 @@ class SearchFragment : Fragment(), SearchContract.View {
                     TeamDetailFragment.newInstance(it.id.toString(), season),
                     R.id.containerLayout
                 )
+                hideKeyboard()
             }
+        }
+    }
+
+    private fun reloadData() {
+        swipeRefreshDataSearch?.setOnRefreshListener {
+            initData()
+        }
+    }
+
+    private fun handleEvent() {
+        imageViewBack.setOnClickListener {
+            fragmentManager?.popBackStack()
+            hideKeyboard()
         }
     }
 

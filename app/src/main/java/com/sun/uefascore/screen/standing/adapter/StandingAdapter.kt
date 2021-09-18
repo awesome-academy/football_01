@@ -18,7 +18,7 @@ class StandingAdapter : RecyclerView.Adapter<StandingAdapter.ViewHolder?>() {
     private var listener: OnItemRecyclerViewClickListener<Team>? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        var view = LayoutInflater.from(parent.context)
+        val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_layout_standing, parent, false)
         return ViewHolder(view).apply {
             registerItemViewHolderListener {
@@ -34,7 +34,7 @@ class StandingAdapter : RecyclerView.Adapter<StandingAdapter.ViewHolder?>() {
     override fun getItemCount() = standings.size
 
     fun updateData(standings: MutableList<Standing>) {
-        standings?.let {
+        standings.let {
             this.standings.clear()
             this.standings.addAll(it)
             notifyDataSetChanged()

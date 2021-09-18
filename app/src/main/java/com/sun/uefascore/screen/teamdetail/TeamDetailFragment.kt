@@ -1,10 +1,12 @@
 package com.sun.uefascore.screen.teamdetail
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import com.sun.uefascore.R
@@ -20,6 +22,7 @@ import com.sun.uefascore.utils.OnFavoriteListener
 import com.sun.uefascore.utils.OnItemRecyclerViewClickListener
 import kotlinx.android.synthetic.main.fragment_team_detail.*
 
+@Suppress("DEPRECATION")
 class TeamDetailFragment : Fragment(), TeamDetailContract.View,
     OnItemRecyclerViewClickListener<PlayerDetail> {
 
@@ -78,22 +81,27 @@ class TeamDetailFragment : Fragment(), TeamDetailContract.View,
         checkFavorite(true)
     }
 
-    override fun onGetPlayersLocalSuccess(playerDetails: MutableList<PlayerDetail>) = Unit
+    override fun onGetPlayersLocalSuccess(playerDetails: MutableList<PlayerDetail>) {
+        checkFavorite(true)
+    }
 
     override fun onSaveTeamLocalSuccess() {
         checkFavorite(true)
     }
 
-    override fun onSavePlayersLocalSuccess() = Unit
+    override fun onSavePlayersLocalSuccess() {
+        checkFavorite(true)
+    }
 
     override fun onDeleteTeamLocalSuccess() {
         checkFavorite(false)
     }
 
-    override fun onDeletePlayersLocalSuccess() = Unit
+    override fun onDeletePlayersLocalSuccess() {
+        checkFavorite(false)
+    }
 
     override fun onFailed(idMessage: Int) {
-        Toast.makeText(context, resources.getString(id), Toast.LENGTH_SHORT).show()
         checkFavorite(false)
     }
 
@@ -145,15 +153,15 @@ class TeamDetailFragment : Fragment(), TeamDetailContract.View,
         imageViewFavorite.setOnClickListener {
             if (isCheck) {
                 idTeam?.let { id ->
-                    presenter.onDeleteTeamLocal(id)
                     presenter.onDeletePlayersLocal(id)
+                    presenter.onDeleteTeamLocal(id)
                 }
                 onFavoriteListener?.onClickFavoriteListener()
             } else {
                 teamDetail?.let { teamDetail ->
                     presenter.onSaveTeamLocal(teamDetail)
                 }
-                playerDetails?.let { playerDetails ->
+                playerDetails.let { playerDetails ->
                     presenter.onSavePlayersLocal(playerDetails)
                 }
                 onFavoriteListener?.onClickFavoriteListener()
@@ -161,16 +169,17 @@ class TeamDetailFragment : Fragment(), TeamDetailContract.View,
         }
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private fun checkFavorite(isFavorite: Boolean) {
         if (isFavorite) {
             isCheck = isFavorite
             imageViewFavorite.setImageDrawable(
-                resources.getDrawable(R.drawable.ic_favorite_checked)
+                context?.let { ContextCompat.getDrawable(it, R.drawable.ic_favorite_checked) }
             )
         } else {
             isCheck = isFavorite
             imageViewFavorite.setImageDrawable(
-                resources.getDrawable(R.drawable.ic_favorite_check)
+                context?.let { ContextCompat.getDrawable(it, R.drawable.ic_favorite_check) }
             )
         }
     }

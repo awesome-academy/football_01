@@ -11,7 +11,7 @@ class LoadImageUrl(private val functionSetBitMap: (Bitmap) -> Unit) :
 
     override fun doInBackground(vararg params: String?): Bitmap? =
         try {
-            var bitmap: Bitmap? = null
+            val bitmap: Bitmap?
             val url = URL(params[0])
             val httpURLConnection = (url.openConnection() as HttpURLConnection).apply {
                 requestMethod = METHOD_GET

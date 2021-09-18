@@ -12,7 +12,7 @@ class FixtureAdapter() :
 
     private var onItemClickedHome: ((Fixture) -> Unit)? = null
     private var onItemClickedAway: ((Fixture) -> Unit)? = null
-    private val fixtures = mutableListOf<Fixture>() 
+    private val fixtures = mutableListOf<Fixture>()
 
     fun updateData(fixture: MutableList<Fixture>?) {
         fixture?.let {

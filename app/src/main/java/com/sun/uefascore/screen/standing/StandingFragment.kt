@@ -43,10 +43,12 @@ class StandingFragment : Fragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
+        reloadData()
     }
 
     override fun onGetStandingLeagueSuccess(standingLeague: StandingLeague) {
         adapter.updateData(standingLeague.standingGroups)
+        swipeRefreshData.isRefreshing = false
     }
 
     override fun onError(exception: Exception) {
@@ -87,6 +89,12 @@ class StandingFragment : Fragment(),
         presenter.run {
             setView(this@StandingFragment)
             getStandingLeague(season)
+        }
+    }
+
+    private fun reloadData() {
+        swipeRefreshData.setOnRefreshListener {
+            initData()
         }
     }
 
